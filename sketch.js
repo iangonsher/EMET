@@ -9,8 +9,8 @@ let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img.jpg");    // Initial image
-  img2 = loadImage("img2.jpg");   // After-rub image
+  img1 = loadImage("img.jpg");    // Start image
+  img2 = loadImage("img2.jpg");   // After rubbing image
 }
 
 function setup() {
@@ -43,10 +43,11 @@ function mouseDragged() {
 
 function touchMoved() {
   rub(touchX, touchY);
-  return false; // Prevent scrolling on mobile
+  return false;
 }
 
 function mousePressed() {
+  // Always reset on click
   resetState();
 }
 
