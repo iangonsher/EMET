@@ -10,7 +10,7 @@ let imageSwitched = false;
 
 function preload() {
   img1 = loadImage("img1.jpg");  // starting image
-  img2 = loadImage("img2.jpg");  // image after rubbing
+  img2 = loadImage("img.jpg");  // image after rubbing
 }
 
 function setup() {
