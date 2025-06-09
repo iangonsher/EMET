@@ -57,11 +57,12 @@ function draw() {
     if (elapsed >= fadeDuration) {
       isFading = false;
       maskLayer.image(preFadeMask, 0, 0);
+      maskLayer.loadPixels();
     }
     return;
   }
 
-  // Apply mask manually
+  // Apply mask manually using maskLayer red channel as alpha
   let masked = img.get();
   masked.loadPixels();
   maskLayer.loadPixels();
@@ -99,8 +100,10 @@ function mouseDragged() {
     }
 
     maskLayer.noStroke();
-    maskLayer.fill(0, 255);  // Fully opaque black for mask
+    maskLayer.fill(0, 255);  // Black means transparent in mask
     maskLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
+
+    maskLayer.loadPixels();  // <-- important! update pixels after drawing
   }
 }
 
@@ -143,6 +146,8 @@ function triggerFade() {
 
 function resetMask() {
   maskLayer.background(255);
+  maskLayer.loadPixels();
+  maskLayer.updatePixels();
   fadeTriggered = false;
   isFading = false;
   isHoldingMouse = false;
