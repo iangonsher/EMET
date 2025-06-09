@@ -1,6 +1,6 @@
 let img1, img2;
 let currentImage;
-const imgW = 500, imgH = 150;
+const imgW = 450, imgH = 150;
 
 let eraseLayer;
 let rubbingStart = 0;
