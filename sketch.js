@@ -20,6 +20,10 @@ function setup() {
 
   eraseLayer = createGraphics(imgW, imgH);
   eraseLayer.clear();
+
+  // Prevent iOS from hijacking gestures
+  document.addEventListener("touchstart", (e) => e.preventDefault(), { passive: false });
+  document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
 }
 
 function draw() {
@@ -55,28 +59,26 @@ function mouseDragged() {
 }
 
 function mousePressed() {
-  // Reset behavior
-  currentImage = img1;
-  imageSwitched = false;
-  rubbingStartTime = null;
-  eraseLayer.clear();
-}
-
-function mouseReleased() {
-  // optional logic
+  resetState();
 }
 
 // Touch input
-function touchMoved() {
-  startRubbing();
-  eraseAt(touchX, touchY);
-  return false;
+function touchStarted() {
+  resetState();
+  return false; // prevent default
 }
 
-function touchStarted() {
+function touchMoved() {
+  startRubbing();
+  for (let t of touches) {
+    eraseAt(t.x, t.y);
+  }
+  return false; // prevent default
+}
+
+function resetState() {
   currentImage = img1;
   imageSwitched = false;
   rubbingStartTime = null;
   eraseLayer.clear();
-  return false;
 }
