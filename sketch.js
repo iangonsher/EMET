@@ -36,7 +36,7 @@ function draw() {
   if (rubbing && !imageSwitched) {
     totalRubbingTime += deltaTime;
     if (totalRubbingTime > 3000) {
-      currentImage = img2;
+      currentImage = img1;
       eraseLayer.clear();
       imageSwitched = true;
     }
