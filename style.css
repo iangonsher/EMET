@@ -4,12 +4,12 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
   background-color: #ffffff;
   display: flex;
   justify-content: center;
   align-items: center;
-  touch-action: none; /* Prevents scrolling on mobile while dragging */
+  overflow: auto;
+  touch-action: none; /* Disable swipe-to-scroll on touch devices while interacting */
 }
 
 canvas {
