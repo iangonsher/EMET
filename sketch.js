@@ -31,7 +31,7 @@ function draw() {
   if (rubbing && !imageSwitched && holdStartTime !== null) {
     let elapsed = millis() - holdStartTime;
     if (elapsed >= 3000) {
-      currentImage = img2;
+      currentImage = img1;
       imageSwitched = true;
       // Keep eraseLayer as is, no clearing
     }
