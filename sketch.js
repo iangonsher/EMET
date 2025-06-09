@@ -1,7 +1,7 @@
 let img1, img2;
 let currentImage;
-let imgW = 450;
-let imgH = 150;
+const imgW = 450;
+const imgH = 150;
 
 let eraseLayer;
 let rubbing = false;
@@ -9,8 +9,8 @@ let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img.jpg");    // Start image
-  img2 = loadImage("img2.jpg");   // After rubbing image
+  img1 = loadImage("img1.jpg");  // starting image
+  img2 = loadImage("img2.jpg");  // image after rubbing
 }
 
 function setup() {
@@ -33,41 +33,39 @@ function draw() {
     if (elapsed >= 3000) {
       currentImage = img2;
       imageSwitched = true;
+      // Keep eraseLayer as is, no clearing
     }
   }
 }
 
-// Mouse events
+// Reset on any click or tap
+function mousePressed() {
+  resetState();
+}
+function touchStarted() {
+  resetState();
+  return false;  // prevent default touch scrolling
+}
+
+// Handle rubbing for mouse drag
 function mouseDragged() {
   rub(mouseX, mouseY);
 }
 
-function mousePressed() {
-  resetState();
+// Handle rubbing for touch move
+function touchMoved() {
+  rub(touchX, touchY);
+  return false;  // prevent default scrolling on touch drag
 }
 
+// Stop rubbing on mouse release or touch end
 function mouseReleased() {
   rubbing = false;
   holdStartTime = null;
 }
-
-// Touch events
-function touchStarted() {
-  resetState();
-  // Prevent default scrolling on touch
-  return false;
-}
-
-function touchMoved() {
-  rub(touchX, touchY);
-  // Prevent default scrolling on touch move
-  return false;
-}
-
 function touchEnded() {
   rubbing = false;
   holdStartTime = null;
-  // Prevent default on touch end
   return false;
 }
 
@@ -80,7 +78,6 @@ function rub(px, py) {
       rubbing = true;
       holdStartTime = millis();
     }
-
     eraseLayer.noStroke();
     eraseLayer.fill(255);
     eraseLayer.ellipse(px - x, py - y, 50, 50);
