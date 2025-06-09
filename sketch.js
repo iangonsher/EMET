@@ -9,12 +9,12 @@ let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img1.jpg");  // starting image
-  img2 = loadImage("img.jpg");  // image after rubbing
+  img1 = loadImage("img1.jpg");
+  img2 = loadImage("img.jpg");
 }
 
 function setup() {
-  createCanvas(500, 300);
+  createCanvas(windowWidth, windowHeight);
   img1.resize(imgW, imgH);
   img2.resize(imgW, imgH);
   resetState();
@@ -22,51 +22,18 @@ function setup() {
 
 function draw() {
   background(255);
+
   let x = (width - imgW) / 2;
   let y = (height - imgH) / 2;
-
   image(currentImage, x, y);
   image(eraseLayer, x, y);
 
   if (rubbing && !imageSwitched && holdStartTime !== null) {
-    let elapsed = millis() - holdStartTime;
-    if (elapsed >= 3000) {
-      currentImage = img1;
+    if (millis() - holdStartTime > 3000) {
+      currentImage = img2;
       imageSwitched = true;
-      // Keep eraseLayer as is, no clearing
     }
   }
-}
-
-// Reset on any click or tap
-function mousePressed() {
-  resetState();
-}
-function touchStarted() {
-  resetState();
-  return false;  // prevent default touch scrolling
-}
-
-// Handle rubbing for mouse drag
-function mouseDragged() {
-  rub(mouseX, mouseY);
-}
-
-// Handle rubbing for touch move
-function touchMoved() {
-  rub(touchX, touchY);
-  return false;  // prevent default scrolling on touch drag
-}
-
-// Stop rubbing on mouse release or touch end
-function mouseReleased() {
-  rubbing = false;
-  holdStartTime = null;
-}
-function touchEnded() {
-  rubbing = false;
-  holdStartTime = null;
-  return false;
 }
 
 function rub(px, py) {
@@ -80,8 +47,36 @@ function rub(px, py) {
     }
     eraseLayer.noStroke();
     eraseLayer.fill(255);
-    eraseLayer.ellipse(px - x, py - y, 50, 50);
+    eraseLayer.ellipse(px - x, py - y, 60, 60);
   }
+}
+
+function mouseDragged() {
+  rub(mouseX, mouseY);
+}
+
+function touchMoved(e) {
+  rub(touches[0].x, touches[0].y);
+  return false; // prevent scrolling
+}
+
+function mouseReleased() {
+  rubbing = false;
+  holdStartTime = null;
+}
+
+function touchEnded() {
+  rubbing = false;
+  holdStartTime = null;
+}
+
+function mousePressed() {
+  resetState();
+}
+
+function touchStarted(e) {
+  resetState();
+  return false;
 }
 
 function resetState() {
