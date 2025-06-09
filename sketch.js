@@ -9,18 +9,15 @@ let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img.jpg");    // This is the first image shown
-  img2 = loadImage("img2.jpg");   // This is the image that appears after rubbing
+  img1 = loadImage("img.jpg");    // First image
+  img2 = loadImage("img2.jpg");   // Image to switch to
 }
 
 function setup() {
   createCanvas(500, 300);
   img1.resize(imgW, imgH);
   img2.resize(imgW, imgH);
-  currentImage = img1;
-
-  eraseLayer = createGraphics(imgW, imgH);
-  eraseLayer.clear();
+  resetState();
 }
 
 function draw() {
@@ -34,7 +31,7 @@ function draw() {
   if (rubbing && !imageSwitched && holdStartTime !== null) {
     let elapsed = millis() - holdStartTime;
     if (elapsed >= 3000) {
-      currentImage = img2; // Switch image
+      currentImage = img2;
       imageSwitched = true;
     }
   }
@@ -59,4 +56,18 @@ function mouseDragged() {
 function mouseReleased() {
   rubbing = false;
   holdStartTime = null;
+}
+
+function mousePressed() {
+  // Reset everything on single click
+  resetState();
+}
+
+function resetState() {
+  currentImage = img1;
+  imageSwitched = false;
+  rubbing = false;
+  holdStartTime = null;
+  eraseLayer = createGraphics(imgW, imgH);
+  eraseLayer.clear();
 }
