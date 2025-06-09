@@ -9,8 +9,8 @@ let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img.jpg");    // First image
-  img2 = loadImage("img2.jpg");   // Image to switch to
+  img1 = loadImage("img.jpg");    // Initial image
+  img2 = loadImage("img2.jpg");   // After-rub image
 }
 
 function setup() {
@@ -38,10 +38,28 @@ function draw() {
 }
 
 function mouseDragged() {
+  rub(mouseX, mouseY);
+}
+
+function touchMoved() {
+  rub(touchX, touchY);
+  return false; // Prevent scrolling on mobile
+}
+
+function mousePressed() {
+  resetState();
+}
+
+function touchStarted() {
+  resetState();
+  return false;
+}
+
+function rub(px, py) {
   let x = (width - imgW) / 2;
   let y = (height - imgH) / 2;
 
-  if (mouseX > x && mouseX < x + imgW && mouseY > y && mouseY < y + imgH) {
+  if (px > x && px < x + imgW && py > y && py < y + imgH) {
     if (!rubbing) {
       rubbing = true;
       holdStartTime = millis();
@@ -49,7 +67,7 @@ function mouseDragged() {
 
     eraseLayer.noStroke();
     eraseLayer.fill(255);
-    eraseLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
+    eraseLayer.ellipse(px - x, py - y, 50, 50);
   }
 }
 
@@ -58,9 +76,9 @@ function mouseReleased() {
   holdStartTime = null;
 }
 
-function mousePressed() {
-  // Reset everything on single click
-  resetState();
+function touchEnded() {
+  rubbing = false;
+  holdStartTime = null;
 }
 
 function resetState() {
