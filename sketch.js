@@ -37,22 +37,37 @@ function draw() {
   }
 }
 
+// Mouse events
 function mouseDragged() {
   rub(mouseX, mouseY);
 }
 
-function touchMoved() {
-  rub(touchX, touchY);
+function mousePressed() {
+  resetState();
+}
+
+function mouseReleased() {
+  rubbing = false;
+  holdStartTime = null;
+}
+
+// Touch events
+function touchStarted() {
+  resetState();
+  // Prevent default scrolling on touch
   return false;
 }
 
-function mousePressed() {
-  // Always reset on click
-  resetState();
+function touchMoved() {
+  rub(touchX, touchY);
+  // Prevent default scrolling on touch move
+  return false;
 }
 
-function touchStarted() {
-  resetState();
+function touchEnded() {
+  rubbing = false;
+  holdStartTime = null;
+  // Prevent default on touch end
   return false;
 }
 
@@ -70,16 +85,6 @@ function rub(px, py) {
     eraseLayer.fill(255);
     eraseLayer.ellipse(px - x, py - y, 50, 50);
   }
-}
-
-function mouseReleased() {
-  rubbing = false;
-  holdStartTime = null;
-}
-
-function touchEnded() {
-  rubbing = false;
-  holdStartTime = null;
 }
 
 function resetState() {
