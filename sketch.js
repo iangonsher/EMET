@@ -61,8 +61,17 @@ function draw() {
     return;
   }
 
+  // Apply mask manually
   let masked = img.get();
-  masked.mask(maskLayer.get());
+  masked.loadPixels();
+  maskLayer.loadPixels();
+
+  for (let i = 0; i < masked.pixels.length; i += 4) {
+    let alpha = maskLayer.pixels[i]; // red channel as alpha
+    masked.pixels[i + 3] = alpha;
+  }
+  masked.updatePixels();
+
   imageCentered(masked);
 
   if ((isHoldingMouse || isHoldingKey) && !fadeTriggered) {
@@ -90,7 +99,7 @@ function mouseDragged() {
     }
 
     maskLayer.noStroke();
-    maskLayer.fill(0, 10);
+    maskLayer.fill(0, 255);  // Fully opaque black for mask
     maskLayer.ellipse(mouseX - x, mouseY - y, 100, 100);
   }
 }
