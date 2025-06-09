@@ -4,7 +4,9 @@ let imgW = 450;
 let imgH = 150;
 
 let eraseLayer;
-let rubbingStartTime = null;
+let rubbing = false;
+let rubbingStartTime = 0;
+let totalRubbingTime = 0;
 let imageSwitched = false;
 
 function preload() {
@@ -24,15 +26,16 @@ function setup() {
 
 function draw() {
   background(255);
-
   let x = (width - imgW) / 2;
   let y = (height - imgH) / 2;
+
   image(currentImage, x, y);
   image(eraseLayer, x, y);
 
-  if (rubbingStartTime && !imageSwitched) {
-    let elapsed = millis() - rubbingStartTime;
-    if (elapsed > 3000) {
+  // Accumulate rubbing time
+  if (rubbing && !imageSwitched) {
+    totalRubbingTime += deltaTime;
+    if (totalRubbingTime > 3000) {
       currentImage = img2;
       eraseLayer.clear();
       imageSwitched = true;
@@ -45,9 +48,7 @@ function mouseDragged() {
   let y = (height - imgH) / 2;
 
   if (mouseX > x && mouseX < x + imgW && mouseY > y && mouseY < y + imgH) {
-    if (!rubbingStartTime) {
-      rubbingStartTime = millis();
-    }
+    rubbing = true;
 
     eraseLayer.noStroke();
     eraseLayer.fill(255);
@@ -56,5 +57,5 @@ function mouseDragged() {
 }
 
 function mouseReleased() {
-  rubbingStartTime = null;
+  rubbing = false;
 }
