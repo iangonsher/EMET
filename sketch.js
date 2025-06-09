@@ -100,7 +100,7 @@ function mouseDragged() {
 
     maskLayer.noStroke();
     maskLayer.fill(0, 255);  // Fully opaque black for mask
-    maskLayer.ellipse(mouseX - x, mouseY - y, 100, 100);
+    maskLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
   }
 }
 
