@@ -5,13 +5,12 @@ let imgH = 150;
 
 let eraseLayer;
 let rubbing = false;
-let rubbingStartTime = 0;
-let totalRubbingTime = 0;
+let holdStartTime = null;
 let imageSwitched = false;
 
 function preload() {
-  img1 = loadImage("img1.jpg");  // Starting image
-  img2 = loadImage("img.jpg");   // Image to switch to
+  img1 = loadImage("img.jpg");    // This is the first image shown
+  img2 = loadImage("img2.jpg");   // This is the image that appears after rubbing
 }
 
 function setup() {
@@ -32,12 +31,10 @@ function draw() {
   image(currentImage, x, y);
   image(eraseLayer, x, y);
 
-  // Accumulate rubbing time
-  if (rubbing && !imageSwitched) {
-    totalRubbingTime += deltaTime;
-    if (totalRubbingTime > 3000) {
-      currentImage = img2;
-      eraseLayer.clear();
+  if (rubbing && !imageSwitched && holdStartTime !== null) {
+    let elapsed = millis() - holdStartTime;
+    if (elapsed >= 3000) {
+      currentImage = img2; // Switch image
       imageSwitched = true;
     }
   }
@@ -48,14 +45,18 @@ function mouseDragged() {
   let y = (height - imgH) / 2;
 
   if (mouseX > x && mouseX < x + imgW && mouseY > y && mouseY < y + imgH) {
-    rubbing = true;
+    if (!rubbing) {
+      rubbing = true;
+      holdStartTime = millis();
+    }
 
     eraseLayer.noStroke();
     eraseLayer.fill(255);
-    eraseLayer.ellipse(mouseX - x, mouseY - y, 100, 100);
+    eraseLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
   }
 }
 
 function mouseReleased() {
   rubbing = false;
+  holdStartTime = null;
 }
