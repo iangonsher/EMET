@@ -1,20 +1,17 @@
-let img, img2;
-let maskLayer;
-let preFadeMask;
-
+let img;
 let imgW = 450;
 let imgH = 150;
+
+let eraseLayer;
+
+let isHoldingMouse = false;
+let isHoldingKey = false;
+let lastHoldStartTime = 0;
+let fadeTriggered = false;
 
 let isFading = false;
 let fadeStartTime = 0;
 let fadeDuration = 2000;
-
-let isRubbing = false;
-let isHoldingKey = false;
-let isHoldingMouse = false;
-
-let lastHoldStartTime = 0;
-let fadeTriggered = false;
 
 let keyCount = 0;
 let lastKeyTime = 0;
@@ -22,70 +19,41 @@ let tapTimeout = 1000;
 
 function preload() {
   img = loadImage("img.jpg");
-  img2 = loadImage("img2.jpg");
 }
 
 function setup() {
   createCanvas(500, 300);
   img.resize(imgW, imgH);
-  img2.resize(imgW, imgH);
 
-  maskLayer = createGraphics(imgW, imgH);
-  preFadeMask = createGraphics(imgW, imgH);
-  resetMask();
+  eraseLayer = createGraphics(imgW, imgH);
+  eraseLayer.clear();  // start transparent
 }
 
 function draw() {
   background(255);
 
-  if (isFading) {
-    let elapsed = millis() - fadeStartTime;
-    let amt = constrain(map(elapsed, 0, fadeDuration, 0, 1), 0, 1);
+  // Draw the main image centered
+  imageCentered(img);
 
-    let blended = createImage(imgW, imgH);
-    blended.loadPixels();
-    img.loadPixels();
-    img2.loadPixels();
-    for (let i = 0; i < img.pixels.length; i += 4) {
-      for (let j = 0; j < 4; j++) {
-        blended.pixels[i + j] = lerp(img.pixels[i + j], img2.pixels[i + j], amt);
-      }
-    }
-    blended.updatePixels();
-    imageCentered(blended);
+  // Draw the eraseLayer on top (white circles)
+  let x = (width - imgW) / 2;
+  let y = (height - imgH) / 2;
+  image(eraseLayer, x, y);
 
-    if (elapsed >= fadeDuration) {
-      isFading = false;
-      maskLayer.image(preFadeMask, 0, 0);
-      maskLayer.loadPixels();
-    }
-    return;
-  }
-
-  // Apply mask manually using maskLayer red channel as alpha
-  let masked = img.get();
-  masked.loadPixels();
-  maskLayer.loadPixels();
-
-  for (let i = 0; i < masked.pixels.length; i += 4) {
-    let alpha = maskLayer.pixels[i]; // red channel as alpha
-    masked.pixels[i + 3] = alpha;
-  }
-  masked.updatePixels();
-
-  imageCentered(masked);
-
+  // Handle fade logic (optional, here just placeholder)
   if ((isHoldingMouse || isHoldingKey) && !fadeTriggered) {
     if (millis() - lastHoldStartTime > 4000) {
-      triggerFade();
+      // You can add fade logic here if needed
+      fadeTriggered = true;
+      console.log("Fade triggered (not implemented)");
     }
   }
 }
 
-function imageCentered(p) {
+function imageCentered(imgToDraw) {
   let x = (width - imgW) / 2;
   let y = (height - imgH) / 2;
-  image(p, x, y);
+  image(imgToDraw, x, y);
 }
 
 function mouseDragged() {
@@ -93,22 +61,19 @@ function mouseDragged() {
   let y = (height - imgH) / 2;
 
   if (mouseX > x && mouseX < x + imgW && mouseY > y && mouseY < y + imgH) {
-    if (!isRubbing) {
-      isRubbing = true;
+    if (!isHoldingMouse) {
       isHoldingMouse = true;
       lastHoldStartTime = millis();
     }
 
-    maskLayer.noStroke();
-    maskLayer.fill(0, 255);  // Black means transparent in mask
-    maskLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
-
-    maskLayer.loadPixels();  // <-- important! update pixels after drawing
+    // Draw white circle on eraseLayer where mouse is
+    eraseLayer.noStroke();
+    eraseLayer.fill(255);
+    eraseLayer.ellipse(mouseX - x, mouseY - y, 50, 50);
   }
 }
 
 function mouseReleased() {
-  isRubbing = false;
   isHoldingMouse = false;
 }
 
@@ -125,8 +90,10 @@ function keyPressed() {
     lastKeyTime = now;
 
     if (keyCount >= 3) {
-      resetMask();
+      eraseLayer.clear();  // reset eraseLayer to transparent
       keyCount = 0;
+      fadeTriggered = false;
+      console.log("Reset erase layer");
     }
   }
 }
@@ -135,21 +102,4 @@ function keyReleased() {
   if (key === ' ') {
     isHoldingKey = false;
   }
-}
-
-function triggerFade() {
-  fadeTriggered = true;
-  isFading = true;
-  fadeStartTime = millis();
-  preFadeMask.image(maskLayer, 0, 0);
-}
-
-function resetMask() {
-  maskLayer.background(255);
-  maskLayer.loadPixels();
-  maskLayer.updatePixels();
-  fadeTriggered = false;
-  isFading = false;
-  isHoldingMouse = false;
-  isHoldingKey = false;
 }
