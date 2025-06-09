@@ -80,7 +80,7 @@ function touchStarted(e) {
 }
 
 function resetState() {
-  currentImage = img1;
+  currentImage = img2;
   imageSwitched = false;
   rubbing = false;
   holdStartTime = null;
