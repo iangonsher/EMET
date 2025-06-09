@@ -32,7 +32,7 @@ function draw() {
 
   if (rubbingStartTime && !imageSwitched) {
     let elapsed = millis() - rubbingStartTime;
-    if (elapsed > 4000) {
+    if (elapsed > 3000) {
       currentImage = img2;
       eraseLayer.clear();
       imageSwitched = true;
@@ -51,7 +51,7 @@ function mouseDragged() {
 
     eraseLayer.noStroke();
     eraseLayer.fill(255);
-    eraseLayer.ellipse(mouseX - x, mouseY - y, 40, 40);
+    eraseLayer.ellipse(mouseX - x, mouseY - y, 100, 100);
   }
 }
 
